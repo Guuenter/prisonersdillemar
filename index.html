@@ -96,53 +96,53 @@
 </head>
 <body>
   <div id="overlay" style="
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(10,0,0,0.95);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-">
-  <div style="
-    max-width: 600px;
-    background: #1a1a1a;
-    border: 2px solid #ff0033;
-    border-radius: 16px;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(10,0,0,0.95);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 2rem;
-    text-align: center;
-    box-shadow: 0 0 20px #ff003380;
-    font-family: 'Poppins', sans-serif;
   ">
-    <h2 style="color: #ff0033; margin-bottom: 1rem;">Welcome to the Prisoner's Dilemma Game</h2>
-    <p style="color: #f1f1f1; font-size: 1rem; line-height: 1.6;">
-      You will play <strong>10 rounds</strong> against a bot.<br><br>
-      Each round, choose to <strong>Cooperate</strong> or <strong>Betray</strong>.<br><br>
-      <strong>Points System:</strong><br>
-      Both Cooperate: 3 points each<br>
-      You Cooperate, Bot Betrays: You get 0, Bot gets 5<br>
-      You Betray, Bot Cooperates: You get 5, Bot gets 0<br>
-      Both Betray: 1 point each<br><br>
-      <strong style="color: #ff0033;">The goal is not to get as many points as possible.</strong>
-    </p>
-    <button onclick="startGame()" style="
-      margin-top: 1.5rem;
-      background: transparent;
+    <div style="
+      max-width: 600px;
+      background: #1a1a1a;
       border: 2px solid #ff0033;
-      color: #ff0033;
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 0.75rem 2rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    " onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
-      I understand, start the game
-    </button>
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 0 20px #ff003380;
+      font-family: 'Poppins', sans-serif;
+    ">
+      <h2 style="color: #ff0033; margin-bottom: 1rem;">Welcome to the Prisoner's Dilemma Game</h2>
+      <p style="color: #f1f1f1; font-size: 1rem; line-height: 1.6;">
+        You will play <strong>10 rounds</strong> against a bot.<br><br>
+        Each round, choose to <strong>Cooperate</strong> or <strong>Betray</strong>.<br><br>
+        <strong>Points System:</strong><br>
+        Both Cooperate: 3 points each<br>
+        You Cooperate, Bot Betrays: You get 0, Bot gets 5<br>
+        You Betray, Bot Cooperates: You get 5, Bot gets 0<br>
+        Both Betray: 1 point each<br><br>
+        <strong style="color: #ff0033;">The goal is not to get as many points as possible.</strong>
+      </p>
+      <button onclick="startGame()" style="
+        margin-top: 1.5rem;
+        background: transparent;
+        border: 2px solid #ff0033;
+        color: #ff0033;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      " onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
+        I understand, start the game
+      </button>
+    </div>
   </div>
-</div>
 
   <h1>Prisoner's Dilemma</h1>
   <ul>
@@ -171,6 +171,10 @@
     let botScore = 0;
     const history = [];
 
+    function startGame() {
+      document.getElementById("overlay").style.display = "none";
+    }
+
     function playRound(playerChoice) {
       if (round > 10) return;
 
@@ -190,59 +194,17 @@
       playerScore += pPoints;
       botScore += bPoints;
 
-      document.getElementById("playerScore").textContent = playerScore;
-      document.getElementById("botScore").textContent = botScore;
+      document.getElementById('round').textContent = round;
+      document.getElementById('playerScore').textContent = playerScore;
+      document.getElementById('botScore').textContent = botScore;
 
-      const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
-      document.getElementById("log").innerHTML += logEntry;
-
-      history.push({
-        round,
-        playerChoice,
-        botChoice,
-        pPoints,
-        bPoints
-      });
+      const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong>. You: +${pPoints}, Bot: +${bPoints}`;
+      history.push(logEntry);
+      document.getElementById('log').innerHTML = history.join('<br>');
 
       round++;
-      document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
-
-      if (round > 10) {
-        document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff3b3b;'>Game Over</h2>";
-        downloadExcel();
-      }
-    }
-
-    function downloadExcel() {
-      const now = new Date();
-      const data = [
-        ["Date", now.toLocaleDateString()],
-        ["Time", now.toLocaleTimeString()],
-        ["Color (Hex)", "#ff3b3b"],
-        ["Color (Name)", "Red"],
-        [],
-        ["Round", "Player Choice", "Bot Choice", "Player Points", "Bot Points"]
-      ];
-
-      let coopCount = 0;
-      history.forEach(h => {
-        if (h.playerChoice === 'cooperate') coopCount++;
-        data.push([h.round, h.playerChoice, h.botChoice, h.pPoints, h.bPoints]);
-      });
-
-      const coopRate = (coopCount / 10 * 100).toFixed(1) + "%";
-      data.push([], ["Cooperation Rate", coopRate], ["Total Player Score", playerScore]);
-
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Game Log");
-      XLSX.writeFile(wb, "PrisonersDilemmaLog.xlsx");
-      function startGame() {
-  const overlay = document.getElementById("overlay");
-  overlay.style.display = "none";
-}
-
     }
   </script>
 </body>
 </html>
+
