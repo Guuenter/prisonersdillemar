@@ -164,50 +164,90 @@
 </head>
 <body>
 
-  <div class="overlay" id="overlay">
-    <h1>Prisoner's Dilemma</h1>
-    <p>This is a 10-round game where you and a bot choose to either Cooperate or Defect.</p>
-    <ul style="text-align:left; max-width: 500px;">
-      <li><strong>Both Cooperate:</strong> 3 points each</li>
-      <li><strong>You Defect, Bot Cooperates:</strong> 5 for you, 0 for bot</li>
-      <li><strong>You Cooperate, Bot Defects:</strong> 0 for you, 5 for bot</li>
-      <li><strong>Both Defect:</strong> 1 point each</li>
-    </ul>
-    <p>The bot uses a Tit-for-Tat strategy: it mimics your last move.</p>
-    <button onclick="startGame()">Start Game</button>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prisoner's Dilemma</title>
+  <style>
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .start-btn {
+      background-color: #ff4b4b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .buttons button {
+      background-color: #ccc;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .scoreboard {
+      margin: 20px 0;
+    }
+  </style>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <h1>Prisoner's Dilemma</h1>
+  <ul>
+    <li><strong>Both Cooperate</strong>: 3 points each</li>
+    <li><strong>You Defect, Bot Cooperates</strong>: 5 for you, 0 for bot</li>
+    <li><strong>You Cooperate, Bot Defects</strong>: 0 for you, 5 for bot</li>
+    <li><strong>Both Defect</strong>: 1 point each</li>
+  </ul>
+
+  <div class="scoreboard">
+    <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
+    <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
+    <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
   </div>
 
-  <div class="game-container" id="game">
-    <h1>Prisoner's Dilemma</h1>
-    <div class="scoreboard">
-      <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
-      <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
-      <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
-    </div>
-
-    <div class="buttons">
-      <button onclick="playRound('cooperate')">🤝 Cooperate</button>
-      <button onclick="playRound('defect')">💣 Defect</button>
-    </div>
-
-    <div class="log" id="log"></div>
+  <div class="buttons">
+    <button onclick="startGame()" class="start-btn">Start Game</button>
   </div>
+
+  <div class="log" id="log"></div>
 
   <script>
     let round = 1;
     let playerScore = 0;
     let botScore = 0;
     let lastPlayerChoice = "cooperate";
+    let gameStarted = false;
+    let roundData = [];
 
     function startGame() {
-      document.getElementById("overlay").style.display = "none";
-      document.getElementById("game").style.display = "block";
+      gameStarted = true;
+      round = 1;
+      playerScore = 0;
+      botScore = 0;
+      lastPlayerChoice = "cooperate";
+      roundData = [];
+
+      document.getElementById("playerScore").textContent = 0;
+      document.getElementById("botScore").textContent = 0;
+      document.getElementById("round").textContent = 1;
+      document.getElementById("log").innerHTML = "";
+
+      document.querySelector(".buttons").innerHTML = `
+        <button onclick="playRound('cooperate')">🤝 Cooperate</button>
+        <button onclick="playRound('defect')">💣 Defect</button>
+      `;
     }
 
     function playRound(playerChoice) {
-      if (round > 10) return;
+      if (!gameStarted || round > 10) return;
 
-      const botChoice = lastPlayerChoice;
+      const botChoice = lastPlayerChoice; // Tit-for-Tat
       let pPoints = 0;
       let bPoints = 0;
 
@@ -230,46 +270,67 @@
       const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
       document.getElementById("log").innerHTML += logEntry;
 
+      roundData.push({
+        round: round,
+        you: playerChoice,
+        bot: botChoice,
+        yourPoints: pPoints,
+        botPoints: bPoints
+      });
+
       lastPlayerChoice = playerChoice;
       round++;
+
       document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
 
       if (round > 10) {
         document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
-        setTimeout(() => {
-          const log = document.getElementById("log").innerHTML;
-          const blob = new Blob([log], { type: "text/html" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "game_log.html";
-          a.click();
-          URL.revokeObjectURL(url);
-        }, 1000);
+        setTimeout(downloadLog, 1000);
       }
+    }
+
+    function downloadLog() {
+      const now = new Date();
+      const timestamp = now.toLocaleString();
+      const colorHex = "#ff4b4b";
+      const colorName = "Rot";
+
+      const cooperationCount = roundData.filter(r => r.you === 'cooperate').length;
+
+      const data = [
+        ["Datum & Uhrzeit", timestamp],
+        ["Farbe", `${colorHex} (${colorName})`],
+        ["Kooperationsrate", `${cooperationCount}/10`],
+        [],
+        ["Runde", "Du", "Bot", "Deine Punkte", "Bot Punkte"]
+      ];
+
+      roundData.forEach(r => {
+        data.push([
+          `Runde ${r.round}`,
+          r.you === 'cooperate' ? 'Kooperiert' : 'Defektiert',
+          r.bot === 'cooperate' ? 'Kooperiert' : 'Defektiert',
+          r.yourPoints,
+          r.botPoints
+        ]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Spielverlauf");
+
+      XLSX.writeFile(wb, `prisoners_dilemma_log_${now.toISOString().split('T')[0]}.xlsx`);
     }
   </script>
 </body>
 </html>
 
-}
-;
-      }
-      function downloadLog() {
-  const timestamp = new Date().toLocaleString();
-  const logContent = document.getElementById("log").innerHTML;
-  const coopCount = (logContent.match(/You chose <strong>cooperate<\/strong>/g) || []).length;
-  const text = `🕒 Zeit: ${timestamp}
-🤝 Kooperationen: ${coopCount} / 10
-🎨 Hintergrundfarbe: #4d0000 (Rot)
+  </script>
+</body>
+</html>
 
-Vielen Dank fürs Spielen!`;
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-  const blob = new Blob([text], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "spielauswertung.txt";
-  a.click();
 }
 
     }
