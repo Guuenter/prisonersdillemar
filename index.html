@@ -197,7 +197,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -206,10 +206,11 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
+      color: #ff4b4b;
     }
 
     .instruction {
-      background-color: #f8f8f8;
+      background-color: #fff0f0;
       padding: 20px;
       border-left: 6px solid #ff4b4b;
       margin-bottom: 20px;
@@ -253,8 +254,8 @@
     <p>Der Bot spielt nach der "Tit-for-Tat"-Strategie: Er macht in Runde 1 Kooperation. Danach macht er das, was du in der vorherigen Runde getan hast.</p>
   </div>
 
-  <div class="buttons" id="startContainer">
-    <button onclick="startGame()">Start the Game</button>
+  <div id="startContainer">
+    <button id="startButton">Start the Game</button>
   </div>
 
   <div id="gameArea" style="display:none;">
@@ -276,11 +277,13 @@
     let playerScore = 0;
     let botScore = 0;
     let lastPlayerChoice = "cooperate";
-    let gameStarted = false;
     let roundData = [];
 
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('startButton').addEventListener('click', startGame);
+    });
+
     function startGame() {
-      gameStarted = true;
       round = 1;
       playerScore = 0;
       botScore = 0;
@@ -302,9 +305,9 @@
     }
 
     function playRound(playerChoice) {
-      if (!gameStarted || round > 10) return;
+      if (round > 10) return;
 
-      const botChoice = lastPlayerChoice; // Tit-for-Tat
+      const botChoice = lastPlayerChoice;
       let pPoints = 0;
       let bPoints = 0;
 
@@ -337,7 +340,6 @@
 
       lastPlayerChoice = playerChoice;
       round++;
-
       document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
 
       if (round > 10) {
@@ -376,7 +378,12 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Spielverlauf");
 
-      XLSX.writeFile(wb, `prisoners_dilemma_log_${now.toISOString().split('T')[0]}.xlsx`);
+      XLSX.writeFile(wb, `Prisoners_Dilemma_${Date.now()}.xlsx`);
+    }
+  </script>
+</body>
+</html>
+
     }
 
 
