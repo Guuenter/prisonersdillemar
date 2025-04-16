@@ -197,25 +197,79 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prisoner's Dilemma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .instruction {
+      background-color: #f8f8f8;
+      padding: 20px;
+      border-left: 6px solid #ff4b4b;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      color: white;
+      background-color: #ff4b4b;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .scoreboard {
+      margin: 20px 0;
+    }
+
+    .log {
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+  </style>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
   <h1>Prisoner's Dilemma</h1>
-  <ul>
-    <li><strong>Both Cooperate</strong>: 3 points each</li>
-    <li><strong>You Defect, Bot Cooperates</strong>: 5 for you, 0 for bot</li>
-    <li><strong>You Cooperate, Bot Defects</strong>: 0 for you, 5 for bot</li>
-    <li><strong>Both Defect</strong>: 1 point each</li>
-  </ul>
 
-  <div class="scoreboard">
-    <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
-    <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
-    <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
+  <div class="instruction">
+    <h2>Spielregeln</h2>
+    <p>Du spielst 10 Runden gegen einen Bot im klassischen Prisoner’s Dilemma.</p>
+    <ul>
+      <li><strong>Beide kooperieren:</strong> 3 Punkte für jeden</li>
+      <li><strong>Du defektierst, Bot kooperiert:</strong> 5 Punkte für dich, 0 für den Bot</li>
+      <li><strong>Du kooperierst, Bot defektiert:</strong> 0 Punkte für dich, 5 für den Bot</li>
+      <li><strong>Beide defektieren:</strong> 1 Punkt für jeden</li>
+    </ul>
+    <p>Der Bot spielt nach der "Tit-for-Tat"-Strategie: Er macht in Runde 1 Kooperation. Danach macht er das, was du in der vorherigen Runde getan hast.</p>
   </div>
 
-  <div class="buttons">
-    <button onclick="startGame()" class="start-btn">Start Game</button>
+  <div class="buttons" id="startContainer">
+    <button onclick="startGame()">Start the Game</button>
   </div>
 
-  <div class="log" id="log"></div>
+  <div id="gameArea" style="display:none;">
+    <div class="scoreboard">
+      <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
+      <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
+      <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
+    </div>
+
+    <div class="buttons" id="choiceButtons">
+      <!-- Spiel-Buttons kommen nach Start hier rein -->
+    </div>
+
+    <div class="log" id="log"></div>
+  </div>
 
   <script>
     let round = 1;
@@ -238,7 +292,10 @@
       document.getElementById("round").textContent = 1;
       document.getElementById("log").innerHTML = "";
 
-      document.querySelector(".buttons").innerHTML = `
+      document.getElementById("startContainer").style.display = "none";
+      document.getElementById("gameArea").style.display = "block";
+
+      document.getElementById("choiceButtons").innerHTML = `
         <button onclick="playRound('cooperate')">🤝 Cooperate</button>
         <button onclick="playRound('defect')">💣 Defect</button>
       `;
@@ -284,7 +341,7 @@
       document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
 
       if (round > 10) {
-        document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
+        document.getElementById("choiceButtons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
         setTimeout(downloadLog, 1000);
       }
     }
@@ -321,19 +378,7 @@
 
       XLSX.writeFile(wb, `prisoners_dilemma_log_${now.toISOString().split('T')[0]}.xlsx`);
     }
-  </script>
-</body>
-</html>
 
-  </script>
-</body>
-</html>
 
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-}
-
-    }
-  </script>
-</body>
-</html>
