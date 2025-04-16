@@ -3,135 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Prisoner's Dilemma</title>
+  <title>Prisoner's Dilemma Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
- body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #1a0000, #330000, #4d0000);
-  color: #f1f1f1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-}
-
-h1 {
-  color: #ff4b4b;
-  margin-bottom: 0.5rem;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 0;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-  color: #e0e0e0;
-}
-
-.scoreboard {
-  background: #1a1a1a;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #ff4b4b80;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.buttons {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-button {
-  background: #ff4b4b; /* Stellt sicher, dass der Hintergrund rot ist */
-  border: 2px solid #ff4b4b;
-  color: #fff; /* Weißer Text für Kontrast */
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.75rem 2rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background: #ff1f1f; /* Helleres Rot, wenn der Button gehovt wird */
-  color: #000; /* Textfarbe wechselt zu schwarz beim Hover */
-  transform: scale(1.05);
-  box-shadow: 0 0 12px #ff4b4ba0;
-}
-
-button:active {
-  background: #e60000; /* Dunkleres Rot, wenn der Button geklickt wird */
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
-}
-
-.log {
-  background: #121212;
-  border-left: 4px solid #ff4b4b;
-  padding: 1rem;
-  width: 100%;
-  max-width: 700px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #00000050 inset;
-  font-size: 0.95rem;
-}
-
-.log strong {
-  color: #ff4b4b;
-}
-
-@media (max-width: 600px) {
-  .buttons {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .scoreboard,
-  .scoreboard p,
-  .scoreboard span,
-  .log {
-    color: #ff4b4b;
-  }
-
-  button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(255, 75, 75, 0.4);
-  }
-
-  button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
-  }
-}
-
-  </style>
-</head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prisoner's Dilemma Game</title>
-  <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #1e1e1e;
-      color: #ffffff;
       margin: 0;
       padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #1a0000, #330000, #4d0000);
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
     }
 
+    h1 {
+      color: #ff4b4b;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      color: #e0e0e0;
+    }
+
+    .scoreboard {
+      background: #1a1a1a;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ff4b4b80;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    button {
+      background: #ff4b4b;
+      border: 2px solid #ff4b4b;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff1f1f;
+      color: #000;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px #ff4b4ba0;
+    }
+
+    button:active {
+      background: #e60000;
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
+    }
+
+    .log {
+      background: #121212;
+      border-left: 4px solid #ff4b4b;
+      padding: 1rem;
+      width: 100%;
+      max-width: 700px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00000050 inset;
+      font-size: 0.95rem;
+    }
+
+    .log strong {
+      color: #ff4b4b;
+    }
+
+    @media (max-width: 600px) {
+      .buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .scoreboard,
+      .scoreboard p,
+      .scoreboard span,
+      .log {
+        color: #ff4b4b;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(255, 75, 75, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
+      }
+    }
+
+    /* Neue Styles für das Overlay und andere Elemente */
     .overlay {
       position: fixed;
       top: 0;
@@ -166,10 +151,6 @@ button:active {
       text-align: center;
     }
 
-    .scoreboard {
-      margin: 1rem 0;
-    }
-
     .buttons button {
       margin: 0.5rem;
       padding: 1rem 2rem;
@@ -200,7 +181,7 @@ button:active {
     }
 
     .buttons button {
-      background-color: #ccc;
+      background-color: #ff4b4b;
       border: none;
       border-radius: 5px;
     }
@@ -222,7 +203,6 @@ button:active {
       color: #ff4b4b;
     }
   </style>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -237,7 +217,7 @@ button:active {
       <li><strong>You cooperate, bot defects:</strong> 0 points for you, 5 for the bot</li>
       <li><strong>Both defect:</strong> 1 point each</li>
     </ul>
-    </div>
+  </div>
 
   <div id="startContainer">
     <button id="startButton">Start the Game</button>
@@ -305,59 +285,19 @@ button:active {
       }
 
       playerScore += pPoints;
-      botScore += bPoints;
+ botScore += bPoints;
+  round++;
 
-      document.getElementById("playerScore").textContent = playerScore;
-      document.getElementById("botScore").textContent = botScore;
+  document.getElementById("playerScore").textContent = playerScore;
+  document.getElementById("botScore").textContent = botScore;
+  document.getElementById("round").textContent = round;
 
-      const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
-      document.getElementById("log").innerHTML += logEntry;
+  document.getElementById("log").innerHTML += `<strong>Round ${round - 1}</strong><br>Player: ${playerChoice}, Bot: ${botChoice}<br>Scores - You: ${pPoints}, Bot: ${bPoints}<br><br>`;
 
-      roundData.push({
-        round: round,
-        you: playerChoice,
-        bot: botChoice,
-        yourPoints: pPoints,
-        botPoints: bPoints
-      });
+  lastPlayerChoice = playerChoice;
 
-      lastPlayerChoice = playerChoice;
-      round++;
-      document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
-
-      if (round > 10) {
-        document.getElementById("choiceButtons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
-        setTimeout(downloadLog, 1000);
-      }
+  if (round > 10) {
+    document.getElementById("log").innerHTML += `<strong>Game Over!</strong><br>Your Final Score: ${playerScore} - Bot Score: ${botScore}<br>`;
+  }
     }
-
-    function downloadLog() {
-      const now = new Date();
-      const timestamp = now.toLocaleString();
-      const colorHex = "#ff4b4b";
-      const colorName = "Red";
-      const cooperationCount = roundData.filter(r => r.you === 'cooperate').length;
-
-      const data = [
-        ["Timestamp", timestamp],
-        ["Color", `${colorHex} (${colorName})`],
-        ["Cooperation Rate", `${cooperationCount}/10`],
-        [],
-        ["Round", "Your Choice", "Bot Choice", "Your Points", "Bot Points"]
-      ];
-
-      roundData.forEach(r => {
-        data.push([r.round, r.you, r.bot, r.yourPoints, r.botPoints]);
-      });
-
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Game Log");
-
-      XLSX.writeFile(wb, "Prisoners_Dilemma_Log.xlsx");
-    }
-  </script>
-</body>
-</html>
-
-
+</script> </body> </html>
