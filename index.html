@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Prisoner's Dilemma Game</title>
+  <title>Prisoner's Dilemma</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #1a0000, #330000, #4d0000);
+      background: linear-gradient(to right, #3a0f0f, #5b1e1e, #702d2d);
       color: #f1f1f1;
       display: flex;
       flex-direction: column;
@@ -19,7 +20,7 @@
     }
 
     h1 {
-      color: #ff4b4b;
+      color: #ff3b3b;
       margin-bottom: 0.5rem;
     }
 
@@ -29,29 +30,28 @@
       margin-top: 0;
       margin-bottom: 2rem;
       font-size: 0.95rem;
-      color: #e0e0e0;
+      color: #ff6666;
     }
 
     .scoreboard {
       background: #1a1a1a;
       padding: 1rem 2rem;
       border-radius: 12px;
-      box-shadow: 0 0 10px #ff4b4b80;
+      box-shadow: 0 0 10px #ff3b3b80;
       margin-bottom: 2rem;
       text-align: center;
     }
 
     .buttons {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
 
     button {
-      background: #ff4b4b;
-      border: 2px solid #ff4b4b;
-      color: #fff;
+      background: transparent;
+      border: 2px solid #ff3b3b;
+      color: #ff3b3b;
       font-size: 1.1rem;
       font-weight: 600;
       padding: 0.75rem 2rem;
@@ -61,21 +61,15 @@
     }
 
     button:hover {
-      background: #ff1f1f;
+      background: #ff3b3b;
       color: #000;
       transform: scale(1.05);
-      box-shadow: 0 0 12px #ff4b4ba0;
-    }
-
-    button:active {
-      background: #e60000;
-      transform: translateY(0);
-      box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
+      box-shadow: 0 0 12px #ff3b3ba0;
     }
 
     .log {
       background: #121212;
-      border-left: 4px solid #ff4b4b;
+      border-left: 4px solid #ff3b3b;
       padding: 1rem;
       width: 100%;
       max-width: 700px;
@@ -85,7 +79,7 @@
     }
 
     .log strong {
-      color: #ff4b4b;
+      color: #ff3b3b;
     }
 
     @media (max-width: 600px) {
@@ -97,249 +91,104 @@
       button {
         width: 100%;
       }
-
-      .scoreboard,
-      .scoreboard p,
-      .scoreboard span,
-      .log {
-        color: #ff4b4b;
-      }
-
-      button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(255, 75, 75, 0.4);
-      }
-
-      button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
-      }
-    }
-
-    /* Neue Styles für das Overlay und andere Elemente */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(30, 30, 30, 0.95);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .overlay button {
-      margin-top: 2rem;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      cursor: pointer;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-    }
-
-    .game-container {
-      display: none;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .buttons button {
-      margin: 0.5rem;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .log {
-      margin-top: 2rem;
-      max-height: 200px;
-      overflow-y: auto;
-      border-top: 1px solid #ccc;
-      padding-top: 1rem;
-    }
-
-    button {
-      font-size: 16px;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-    }
-
-    .start-btn {
-      background-color: #ff4b4b;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    .buttons button {
-      background-color: #ff4b4b;
-      border: none;
-      border-radius: 5px;
-    }
-
-    .scoreboard {
-      margin: 20px 0;
-    }
-
-    .log {
-      margin-top: 20px;
-      line-height: 1.5;
-    }
-
-    .instruction {
-      background-color: #fff0f0;
-      padding: 20px;
-      border-left: 6px solid #ff4b4b;
-      margin-bottom: 20px;
-      color: #ff4b4b;
     }
   </style>
 </head>
 <body>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prisoner's Dilemma</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .button {
-      padding: 10px 20px;
-      margin: 10px;
-      cursor: pointer;
-      font-size: 16px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-      border-radius: 5px;
-    }
-    .log {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #f9f9f9;
-      height: 300px;
-      overflow-y: scroll;
-    }
-    .scoreboard {
-      margin-top: 20px;
-    }
-    .scoreboard p {
-      font-size: 18px;
-    }
-    .highlight {
-      color: red;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>Prisoner's Dilemma Game</h1>
-  <p>Choose between "Cooperate" or "Defect". Try to beat the bot!</p>
-
-  <button class="button" onclick="playerChoice('cooperate')">Cooperate</button>
-  <button class="button" onclick="playerChoice('defect')">Defect</button>
+  <h1>Prisoner's Dilemma</h1>
+  <ul>
+    <li><strong>Both Cooperate</strong>: 3 points each</li>
+    <li><strong>You Defect, Bot Cooperates</strong>: 5 for you, 0 for bot</li>
+    <li><strong>You Cooperate, Bot Defects</strong>: 0 for you, 5 for bot</li>
+    <li><strong>Both Defect</strong>: 1 point each</li>
+  </ul>
 
   <div class="scoreboard">
-    <p id="playerScore">Your Score: 0</p>
-    <p id="botScore">Bot Score: 0</p>
-    <p id="round">Round: 1</p>
+    <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
+    <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
+    <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
+  </div>
+
+  <div class="buttons">
+    <button onclick="playRound('cooperate')">🤝 Cooperate</button>
+    <button onclick="playRound('defect')">💣 Defect</button>
   </div>
 
   <div class="log" id="log"></div>
 
   <script>
+    let round = 1;
     let playerScore = 0;
     let botScore = 0;
-    let round = 1;
-    let playerChoiceHistory = [];
-    let botChoiceHistory = [];
+    const history = [];
 
-    function playerChoice(choice) {
-      if (round > 10) {
-        alert("Game Over! Click Restart to play again.");
-        return;
-      }
+    function playRound(playerChoice) {
+      if (round > 10) return;
 
-      let botChoice = botDecision();
-      let points = playRound(choice, botChoice);
-
-      // Update scores and log
-      playerScore += points.player;
-      botScore += points.bot;
-      round++;
-
-      document.getElementById("playerScore").textContent = "Your Score: " + playerScore;
-      document.getElementById("botScore").textContent = "Bot Score: " + botScore;
-      document.getElementById("round").textContent = "Round: " + round;
-
-      // Log results
-      let logText = `<strong>Round ${round - 1}</strong><br>Your choice: ${choice}, Bot's choice: ${botChoice}<br>Scores - You: ${points.player}, Bot: ${points.bot}<br><br>`;
-      document.getElementById("log").innerHTML += logText;
-
-      // Download the game log after the game ends
-      if (round > 10) {
-        let logData = generateLogData();
-        downloadLog(logData);
-      }
-    }
-
-    function botDecision() {
-      // Simple strategy: repeat player's previous choice or defect randomly
-      return round === 1 || Math.random() < 0.5 ? 'cooperate' : 'defect';
-    }
-
-    function playRound(playerChoice, botChoice) {
-      let playerPoints = 0;
-      let botPoints = 0;
+      const botChoice = Math.random() < 0.5 ? 'cooperate' : 'defect';
+      let pPoints = 0, bPoints = 0;
 
       if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
-        playerPoints = 3;
-        botPoints = 3;
+        pPoints = 3; bPoints = 3;
       } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
-        playerPoints = 5;
-        botPoints = 0;
+        pPoints = 5; bPoints = 0;
       } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
-        playerPoints = 0;
-        botPoints = 5;
-      } else if (playerChoice === 'defect' && botChoice === 'defect') {
-        playerPoints = 1;
-        botPoints = 1;
+        pPoints = 0; bPoints = 5;
+      } else {
+        pPoints = 1; bPoints = 1;
       }
 
-      return { player: playerPoints, bot: botPoints };
-    }
+      playerScore += pPoints;
+      botScore += bPoints;
 
-    function generateLogData() {
-      let logData = "Game Log:\n\n";
-      for (let i = 0; i < playerChoiceHistory.length; i++) {
-        logData += `Round ${i + 1} - Player: ${playerChoiceHistory[i]}, Bot: ${botChoiceHistory[i]}\n`;
+      document.getElementById("playerScore").textContent = playerScore;
+      document.getElementById("botScore").textContent = botScore;
+
+      const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
+      document.getElementById("log").innerHTML += logEntry;
+
+      history.push({
+        round,
+        playerChoice,
+        botChoice,
+        pPoints,
+        bPoints
+      });
+
+      round++;
+      document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
+
+      if (round > 10) {
+        document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff3b3b;'>Game Over</h2>";
+        downloadExcel();
       }
-      logData += `\nFinal Scores:\nPlayer: ${playerScore}\nBot: ${botScore}`;
-      return logData;
     }
 
-    function downloadLog(logData) {
-      let blob = new Blob([logData], { type: 'text/plain' });
-      let link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'game_log.txt';
-      link.click();
+    function downloadExcel() {
+      const now = new Date();
+      const data = [
+        ["Date", now.toLocaleDateString()],
+        ["Time", now.toLocaleTimeString()],
+        ["Color (Hex)", "#ff3b3b"],
+        ["Color (Name)", "Red"],
+        [],
+        ["Round", "Player Choice", "Bot Choice", "Player Points", "Bot Points"]
+      ];
+
+      let coopCount = 0;
+      history.forEach(h => {
+        if (h.playerChoice === 'cooperate') coopCount++;
+        data.push([h.round, h.playerChoice, h.botChoice, h.pPoints, h.bPoints]);
+      });
+
+      const coopRate = (coopCount / 10 * 100).toFixed(1) + "%";
+      data.push([], ["Cooperation Rate", coopRate], ["Total Player Score", playerScore]);
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Game Log");
+      XLSX.writeFile(wb, "PrisonersDilemmaLog.xlsx");
     }
   </script>
-
 </body>
 </html>
