@@ -205,99 +205,141 @@
   </style>
 </head>
 <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prisoner's Dilemma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+    }
+    .log {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      height: 300px;
+      overflow-y: scroll;
+    }
+    .scoreboard {
+      margin-top: 20px;
+    }
+    .scoreboard p {
+      font-size: 18px;
+    }
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prisoner's Dilemma Game</h1>
+  <p>Choose between "Cooperate" or "Defect". Try to beat the bot!</p>
 
-  <h1>Prisoner's Dilemma</h1>
+  <button class="button" onclick="playerChoice('cooperate')">Cooperate</button>
+  <button class="button" onclick="playerChoice('defect')">Defect</button>
 
-  <div class="instruction">
-    <h2>Game Instructions</h2>
-    <p>You are playing 10 rounds of the classic Prisoner’s Dilemma against a bot.</p>
-    <ul>
-      <li><strong>Both cooperate:</strong> 3 points each</li>
-      <li><strong>You defect, bot cooperates:</strong> 5 points for you, 0 for the bot</li>
-      <li><strong>You cooperate, bot defects:</strong> 0 points for you, 5 for the bot</li>
-      <li><strong>Both defect:</strong> 1 point each</li>
-    </ul>
+  <div class="scoreboard">
+    <p id="playerScore">Your Score: 0</p>
+    <p id="botScore">Bot Score: 0</p>
+    <p id="round">Round: 1</p>
   </div>
 
-  <div id="startContainer">
-    <button id="startButton">Start the Game</button>
-  </div>
-
-  <div id="gameArea" style="display:none;">
-    <div class="scoreboard">
-      <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
-      <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
-      <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
-    </div>
-
-    <div class="buttons" id="choiceButtons"></div>
-
-    <div class="log" id="log"></div>
-  </div>
+  <div class="log" id="log"></div>
 
   <script>
-    let round = 1;
     let playerScore = 0;
     let botScore = 0;
-    let lastPlayerChoice = "cooperate";
-    let roundData = [];
+    let round = 1;
+    let playerChoiceHistory = [];
+    let botChoiceHistory = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('startButton').addEventListener('click', startGame);
-    });
-
-    function startGame() {
-      round = 1;
-      playerScore = 0;
-      botScore = 0;
-      lastPlayerChoice = "cooperate";
-      roundData = [];
-
-      document.getElementById("playerScore").textContent = 0;
-      document.getElementById("botScore").textContent = 0;
-      document.getElementById("round").textContent = 1;
-      document.getElementById("log").innerHTML = "";
-
-      document.getElementById("startContainer").style.display = "none";
-      document.getElementById("gameArea").style.display = "block";
-
-      document.getElementById("choiceButtons").innerHTML = `
-        <button onclick="playRound('cooperate')">🤝 Cooperate</button>
-        <button onclick="playRound('defect')">💣 Defect</button>
-      `;
-    }
-
-    function playRound(playerChoice) {
-      if (round > 10) return;
-
-      const botChoice = lastPlayerChoice;
-      let pPoints = 0;
-      let bPoints = 0;
-
-      if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
-        pPoints = 3; bPoints = 3;
-      } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
-        pPoints = 5; bPoints = 0;
-      } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
-        pPoints = 0; bPoints = 5;
-      } else {
-        pPoints = 1; bPoints = 1;
+    function playerChoice(choice) {
+      if (round > 10) {
+        alert("Game Over! Click Restart to play again.");
+        return;
       }
 
-      playerScore += pPoints;
- botScore += bPoints;
-  round++;
+      let botChoice = botDecision();
+      let points = playRound(choice, botChoice);
 
-  document.getElementById("playerScore").textContent = playerScore;
-  document.getElementById("botScore").textContent = botScore;
-  document.getElementById("round").textContent = round;
+      // Update scores and log
+      playerScore += points.player;
+      botScore += points.bot;
+      round++;
 
-  document.getElementById("log").innerHTML += `<strong>Round ${round - 1}</strong><br>Player: ${playerChoice}, Bot: ${botChoice}<br>Scores - You: ${pPoints}, Bot: ${bPoints}<br><br>`;
+      document.getElementById("playerScore").textContent = "Your Score: " + playerScore;
+      document.getElementById("botScore").textContent = "Bot Score: " + botScore;
+      document.getElementById("round").textContent = "Round: " + round;
 
-  lastPlayerChoice = playerChoice;
+      // Log results
+      let logText = `<strong>Round ${round - 1}</strong><br>Your choice: ${choice}, Bot's choice: ${botChoice}<br>Scores - You: ${points.player}, Bot: ${points.bot}<br><br>`;
+      document.getElementById("log").innerHTML += logText;
 
-  if (round > 10) {
-    document.getElementById("log").innerHTML += `<strong>Game Over!</strong><br>Your Final Score: ${playerScore} - Bot Score: ${botScore}<br>`;
-  }
+      // Download the game log after the game ends
+      if (round > 10) {
+        let logData = generateLogData();
+        downloadLog(logData);
+      }
     }
-</script> </body> </html>
+
+    function botDecision() {
+      // Simple strategy: repeat player's previous choice or defect randomly
+      return round === 1 || Math.random() < 0.5 ? 'cooperate' : 'defect';
+    }
+
+    function playRound(playerChoice, botChoice) {
+      let playerPoints = 0;
+      let botPoints = 0;
+
+      if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
+        playerPoints = 3;
+        botPoints = 3;
+      } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
+        playerPoints = 5;
+        botPoints = 0;
+      } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
+        playerPoints = 0;
+        botPoints = 5;
+      } else if (playerChoice === 'defect' && botChoice === 'defect') {
+        playerPoints = 1;
+        botPoints = 1;
+      }
+
+      return { player: playerPoints, bot: botPoints };
+    }
+
+    function generateLogData() {
+      let logData = "Game Log:\n\n";
+      for (let i = 0; i < playerChoiceHistory.length; i++) {
+        logData += `Round ${i + 1} - Player: ${playerChoiceHistory[i]}, Bot: ${botChoiceHistory[i]}\n`;
+      }
+      logData += `\nFinal Scores:\nPlayer: ${playerScore}\nBot: ${botScore}`;
+      return logData;
+    }
+
+    function downloadLog(logData) {
+      let blob = new Blob([logData], { type: 'text/plain' });
+      let link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'game_log.txt';
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
