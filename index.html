@@ -94,17 +94,33 @@
   </style>
 </head>
 <body>
-  <div class="log" style="margin-bottom: 2rem;">
-  <h2 style="color: #ff4b4b; margin-top: 0;">📜 Spielanleitung</h2>
-  <p>Du spielst 10 Runden im klassischen Gefangenendilemma gegen einen Bot.</p>
-  <ul style="margin: 0.5rem 0 1rem 1rem; list-style-type: disc;">
-    <li><strong>Beide kooperieren:</strong> 3 Punkte pro Spieler</li>
-    <li><strong>Du verrätst, Bot kooperiert:</strong> Du 5, Bot 0</li>
-    <li><strong>Du kooperierst, Bot verrät:</strong> Du 0, Bot 5</li>
-    <li><strong>Beide verraten:</strong> 1 Punkt pro Spieler</li>
-  </ul>
-  <p>Der Bot spielt <em>"Tit for Tat"</em> – er spiegelt deine letzte Entscheidung.</p>
+  <div id="intro" style="text-align: center; max-width: 700px;">
+  <h2 style="color: #ff4b4b;">How the Game Works</h2>
+  <p>
+    You will play 10 rounds of the classic Prisoner's Dilemma.<br><br>
+    <strong>Scoring:</strong><br>
+    • Both Cooperate: 3 points each<br>
+    • You Defect, Bot Cooperates: You 5, Bot 0<br>
+    • You Cooperate, Bot Defects: You 0, Bot 5<br>
+    • Both Defect: 1 point each
+  </p>
+  <p>The goal is to get as many points as possible.</p>
+  <button onclick="startGame()" style="
+    background: transparent;
+    border: 2px solid #ff4b4b;
+    color: #ff4b4b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+  " onmouseover="this.style.background='#ff4b4b'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='#ff4b4b';">
+    Start Game
+  </button>
 </div>
+
 
   <h1>Prisoner's Dilemma</h1>
   <ul>
@@ -168,7 +184,10 @@
       document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
 
       if (round > 10) {
-        document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
+  document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
+  setTimeout(downloadLog, 1000); // Kurze Pause für bessere UX
+}
+;
       }
       function downloadLog() {
   const timestamp = new Date().toLocaleString();
