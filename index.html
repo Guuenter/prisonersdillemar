@@ -94,6 +94,18 @@
   </style>
 </head>
 <body>
+  <div class="log" style="margin-bottom: 2rem;">
+  <h2 style="color: #ff4b4b; margin-top: 0;">📜 Spielanleitung</h2>
+  <p>Du spielst 10 Runden im klassischen Gefangenendilemma gegen einen Bot.</p>
+  <ul style="margin: 0.5rem 0 1rem 1rem; list-style-type: disc;">
+    <li><strong>Beide kooperieren:</strong> 3 Punkte pro Spieler</li>
+    <li><strong>Du verrätst, Bot kooperiert:</strong> Du 5, Bot 0</li>
+    <li><strong>Du kooperierst, Bot verrät:</strong> Du 0, Bot 5</li>
+    <li><strong>Beide verraten:</strong> 1 Punkt pro Spieler</li>
+  </ul>
+  <p>Der Bot spielt <em>"Tit for Tat"</em> – er spiegelt deine letzte Entscheidung.</p>
+</div>
+
   <h1>Prisoner's Dilemma</h1>
   <ul>
     <li><strong>Both Cooperate</strong>: 3 points each</li>
@@ -158,6 +170,23 @@
       if (round > 10) {
         document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
       }
+      function downloadLog() {
+  const timestamp = new Date().toLocaleString();
+  const logContent = document.getElementById("log").innerHTML;
+  const coopCount = (logContent.match(/You chose <strong>cooperate<\/strong>/g) || []).length;
+  const text = `🕒 Zeit: ${timestamp}
+🤝 Kooperationen: ${coopCount} / 10
+🎨 Hintergrundfarbe: #4d0000 (Rot)
+
+Vielen Dank fürs Spielen!`;
+
+  const blob = new Blob([text], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "spielauswertung.txt";
+  a.click();
+}
+
     }
   </script>
 </body>
