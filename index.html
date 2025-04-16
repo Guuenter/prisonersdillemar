@@ -105,7 +105,7 @@
         You Cooperate, Bot Betrays: You get 0, Bot gets 5<br>
         You Betray, Bot Cooperates: You get 5, Bot gets 0<br>
         Both Betray: 1 point each<br><br>
-        <strong style="color: #ff0033;">The goal is to get as many points as possible.</strong>
+        <strong style="color: #ff0033;">The goal is not to get as many points as possible.</strong>
       </p>
       <button onclick="startGame()" style="margin-top: 1.5rem; background: transparent; border: 2px solid #ff0033; color: #ff0033; font-size: 1.1rem; font-weight: 600; padding: 0.75rem 2rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
         I understand, start the game
@@ -179,65 +179,6 @@
         document.getElementById("log").innerHTML = final + "<br><br>" + document.getElementById("log").innerHTML;
       }
     }
-    <script>
-  let round = 1;
-  let playerScore = 0;
-  let botScore = 0;
-  const history = [];
-
-  function startGame() {
-    document.getElementById("overlay").style.display = "none";
-  }
-
-  function playRound(playerChoice) {
-    if (round > 10) return;
-
-    const botChoice = Math.random() < 0.5 ? 'cooperate' : 'defect';
-
-    let playerPoints = 0;
-    let botPoints = 0;
-
-    if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
-      playerPoints = 3;
-      botPoints = 3;
-    } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
-      playerPoints = 0;
-      botPoints = 5;
-    } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
-      playerPoints = 5;
-      botPoints = 0;
-    } else {
-      playerPoints = 1;
-      botPoints = 1;
-    }
-
-    playerScore += playerPoints;
-    botScore += botPoints;
-
-    history.push({
-      round,
-      player: playerChoice,
-      bot: botChoice,
-      playerPoints,
-      botPoints
-    });
-
-    document.getElementById("round").innerText = round;
-    document.getElementById("playerScore").innerText = playerScore;
-    document.getElementById("botScore").innerText = botScore;
-
-    const log = document.getElementById("log");
-    log.innerHTML += `<p><strong>Round ${round}:</strong> You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong>. → You: ${playerPoints} pts, Bot: ${botPoints} pts.</p>`;
-
-    round++;
-
-    if (round > 10) {
-      log.innerHTML += `<hr><p><strong>Game Over.</strong><br>You scored <strong>${playerScore}</strong> points.<br>The Bot scored <strong>${botScore}</strong> points.</p>`;
-    }
-  }
-</script>
-
   </script>
 </body>
 </html>
-
