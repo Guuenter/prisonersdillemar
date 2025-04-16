@@ -93,53 +93,132 @@
     }
   </style>
 </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prisoner's Dilemma Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 30, 30, 0.95);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .overlay button {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .game-container {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .scoreboard {
+      margin: 1rem 0;
+    }
+
+    .buttons button {
+      margin: 0.5rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .log {
+      margin-top: 2rem;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
 <body>
-  <h1>Prisoner's Dilemma</h1>
-  <ul>
-    <li><strong>Both Cooperate</strong>: 3 points each</li>
-    <li><strong>You Defect, Bot Cooperates</strong>: 5 for you, 0 for bot</li>
-    <li><strong>You Cooperate, Bot Defects</strong>: 0 for you, 5 for bot</li>
-    <li><strong>Both Defect</strong>: 1 point each</li>
-  </ul>
 
-  <div class="scoreboard">
-    <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
-    <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
-    <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
+  <div class="overlay" id="overlay">
+    <h1>Prisoner's Dilemma</h1>
+    <p>This is a 10-round game where you and a bot choose to either Cooperate or Defect.</p>
+    <ul style="text-align:left; max-width: 500px;">
+      <li><strong>Both Cooperate:</strong> 3 points each</li>
+      <li><strong>You Defect, Bot Cooperates:</strong> 5 for you, 0 for bot</li>
+      <li><strong>You Cooperate, Bot Defects:</strong> 0 for you, 5 for bot</li>
+      <li><strong>Both Defect:</strong> 1 point each</li>
+    </ul>
+    <p>The bot uses a Tit-for-Tat strategy: it mimics your last move.</p>
+    <button onclick="startGame()">Start Game</button>
   </div>
 
-  <div class="buttons">
-    <button onclick="playRound('cooperate')">🤝 Cooperate</button>
-    <button onclick="playRound('defect')">💣 Defect</button>
-  </div>
+  <div class="game-container" id="game">
+    <h1>Prisoner's Dilemma</h1>
+    <div class="scoreboard">
+      <p><strong>Round:</strong> <span id="round">1</span> / 10</p>
+      <p><strong>Your Score:</strong> <span id="playerScore">0</span></p>
+      <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
+    </div>
 
-  <div class="log" id="log"></div>
+    <div class="buttons">
+      <button onclick="playRound('cooperate')">🤝 Cooperate</button>
+      <button onclick="playRound('defect')">💣 Defect</button>
+    </div>
+
+    <div class="log" id="log"></div>
+  </div>
 
   <script>
     let round = 1;
     let playerScore = 0;
     let botScore = 0;
-    let lastPlayerChoice = "cooperate"; // Start with assumption of cooperation
+    let lastPlayerChoice = "cooperate";
+
+    function startGame() {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("game").style.display = "block";
+    }
 
     function playRound(playerChoice) {
       if (round > 10) return;
 
-      const botChoice = lastPlayerChoice; // Tit-for-Tat: mirrors last move
+      const botChoice = lastPlayerChoice;
       let pPoints = 0;
       let bPoints = 0;
 
       if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
-        pPoints = 3;
-        bPoints = 3;
+        pPoints = 3; bPoints = 3;
       } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
-        pPoints = 5;
-        bPoints = 0;
+        pPoints = 5; bPoints = 0;
       } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
-        pPoints = 0;
-        bPoints = 5;
+        pPoints = 0; bPoints = 5;
       } else {
-        pPoints = 1;
-        bPoints = 1;
+        pPoints = 1; bPoints = 1;
       }
 
       playerScore += pPoints;
@@ -151,13 +230,28 @@
       const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
       document.getElementById("log").innerHTML += logEntry;
 
-      lastPlayerChoice = playerChoice; // Update for next round
+      lastPlayerChoice = playerChoice;
       round++;
       document.getElementById("round").textContent = round > 10 ? "Game Over" : round;
 
       if (round > 10) {
-  document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
-  setTimeout(downloadLog, 1000); // Kurze Pause für bessere UX
+        document.querySelector(".buttons").innerHTML = "<h2 style='color:#ff4b4b;'>Game Over</h2>";
+        setTimeout(() => {
+          const log = document.getElementById("log").innerHTML;
+          const blob = new Blob([log], { type: "text/html" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "game_log.html";
+          a.click();
+          URL.revokeObjectURL(url);
+        }, 1000);
+      }
+    }
+  </script>
+</body>
+</html>
+
 }
 ;
       }
