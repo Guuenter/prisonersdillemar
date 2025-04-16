@@ -95,6 +95,55 @@
   </style>
 </head>
 <body>
+  <div id="overlay" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(10,0,0,0.95);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+">
+  <div style="
+    max-width: 600px;
+    background: #1a1a1a;
+    border: 2px solid #ff0033;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 0 20px #ff003380;
+    font-family: 'Poppins', sans-serif;
+  ">
+    <h2 style="color: #ff0033; margin-bottom: 1rem;">Welcome to the Prisoner's Dilemma Game</h2>
+    <p style="color: #f1f1f1; font-size: 1rem; line-height: 1.6;">
+      You will play <strong>10 rounds</strong> against a bot.<br><br>
+      Each round, choose to <strong>Cooperate</strong> or <strong>Betray</strong>.<br><br>
+      <strong>Points System:</strong><br>
+      Both Cooperate: 3 points each<br>
+      You Cooperate, Bot Betrays: You get 0, Bot gets 5<br>
+      You Betray, Bot Cooperates: You get 5, Bot gets 0<br>
+      Both Betray: 1 point each<br><br>
+      <strong style="color: #ff0033;">The goal is not to get as many points as possible.</strong>
+    </p>
+    <button onclick="startGame()" style="
+      margin-top: 1.5rem;
+      background: transparent;
+      border: 2px solid #ff0033;
+      color: #ff0033;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    " onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
+      I understand, start the game
+    </button>
+  </div>
+</div>
+
   <h1>Prisoner's Dilemma</h1>
   <ul>
     <li><strong>Both Cooperate</strong>: 3 points each</li>
@@ -188,6 +237,11 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Game Log");
       XLSX.writeFile(wb, "PrisonersDilemmaLog.xlsx");
+      function startGame() {
+  const overlay = document.getElementById("overlay");
+  overlay.style.display = "none";
+}
+
     }
   </script>
 </body>
