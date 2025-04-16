@@ -204,6 +204,82 @@
 
       round++;
     }
+        function endGame() {
+      // Display Game Over message
+      alert("Game Over, thank you for playing!");
+
+      // Calculate Cooperation Rate
+      let cooperations = history.filter(entry => entry.includes("Cooperate")).length;
+      let cooperationRate = (cooperations / history.length) * 100;
+
+      // Prepare data for Excel download
+      let gameData = {
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        results: history,
+        cooperationRate: cooperationRate.toFixed(2) + "%",
+        playerScore: playerScore,
+        botScore: botScore,
+      };
+
+      // Add game data to Excel sheet
+      let ws = XLSX.utils.json_to_sheet([{
+        Date: gameData.date,
+        Time: gameData.time,
+        Results: gameData.results.join("\n"),
+        CooperationRate: gameData.cooperationRate,
+        PlayerScore: gameData.playerScore,
+        BotScore: gameData.botScore
+      }]);
+
+      // Create workbook and export as Excel file
+      let wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Game Results");
+
+      // Download the Excel file
+      XLSX.writeFile(wb, "prisoners_dilemma_results.xlsx");
+    }
+
+    // Modify playRound to handle game completion
+    function playRound(playerChoice) {
+      if (round > 10) {
+        endGame();
+        return;
+      }
+
+      const botChoice = Math.random() < 0.5 ? 'cooperate' : 'defect';
+      let pPoints = 0, bPoints = 0;
+
+      if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
+        pPoints = 3; bPoints = 3;
+      } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
+        pPoints = 5; bPoints = 0;
+      } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
+        pPoints = 0; bPoints = 5;
+      } else {
+        pPoints = 1; bPoints = 1;
+      }
+
+      playerScore += pPoints;
+      botScore += bPoints;
+
+      document.getElementById('round').textContent = round;
+      document.getElementById('playerScore').textContent = playerScore;
+      document.getElementById('botScore').textContent = botScore;
+
+      const logEntry = `Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong>. You: +${pPoints}, Bot: +${bPoints}`;
+      history.push(logEntry);
+      document.getElementById('log').innerHTML = history.join('<br>');
+
+      round++;
+    }
+  </script>
+
+  <!-- Add an End Game Button -->
+  <div class="buttons">
+    <button onclick="endGame()">End Game & Download Results</button>
+  </div>
+
   </script>
 </body>
 </html>
