@@ -214,6 +214,7 @@
       padding: 20px;
       border-left: 6px solid #ff4b4b;
       margin-bottom: 20px;
+      color: #ff4b4b;
     }
 
     button {
@@ -243,15 +244,15 @@
   <h1>Prisoner's Dilemma</h1>
 
   <div class="instruction">
-    <h2>Spielregeln</h2>
-    <p>Du spielst 10 Runden gegen einen Bot im klassischen Prisoner’s Dilemma.</p>
+    <h2>Game Instructions</h2>
+    <p>You are playing 10 rounds of the classic Prisoner’s Dilemma against a bot.</p>
     <ul>
-      <li><strong>Beide kooperieren:</strong> 3 Punkte für jeden</li>
-      <li><strong>Du defektierst, Bot kooperiert:</strong> 5 Punkte für dich, 0 für den Bot</li>
-      <li><strong>Du kooperierst, Bot defektiert:</strong> 0 Punkte für dich, 5 für den Bot</li>
-      <li><strong>Beide defektieren:</strong> 1 Punkt für jeden</li>
+      <li><strong>Both cooperate:</strong> 3 points each</li>
+      <li><strong>You defect, bot cooperates:</strong> 5 points for you, 0 for the bot</li>
+      <li><strong>You cooperate, bot defects:</strong> 0 points for you, 5 for the bot</li>
+      <li><strong>Both defect:</strong> 1 point each</li>
     </ul>
-    <p>Der Bot spielt nach der "Tit-for-Tat"-Strategie: Er macht in Runde 1 Kooperation. Danach macht er das, was du in der vorherigen Runde getan hast.</p>
+    <p>The bot follows a "Tit-for-Tat" strategy: it cooperates in the first round and then mirrors your previous choice in subsequent rounds.</p>
   </div>
 
   <div id="startContainer">
@@ -265,9 +266,7 @@
       <p><strong>Bot Score:</strong> <span id="botScore">0</span></p>
     </div>
 
-    <div class="buttons" id="choiceButtons">
-      <!-- Spiel-Buttons kommen nach Start hier rein -->
-    </div>
+    <div class="buttons" id="choiceButtons"></div>
 
     <div class="log" id="log"></div>
   </div>
@@ -352,40 +351,32 @@
       const now = new Date();
       const timestamp = now.toLocaleString();
       const colorHex = "#ff4b4b";
-      const colorName = "Rot";
-
+      const colorName = "Red";
       const cooperationCount = roundData.filter(r => r.you === 'cooperate').length;
 
       const data = [
-        ["Datum & Uhrzeit", timestamp],
-        ["Farbe", `${colorHex} (${colorName})`],
-        ["Kooperationsrate", `${cooperationCount}/10`],
+        ["Timestamp", timestamp],
+        ["Color", `${colorHex} (${colorName})`],
+        ["Cooperation Rate", `${cooperationCount}/10`],
         [],
-        ["Runde", "Du", "Bot", "Deine Punkte", "Bot Punkte"]
+        ["Round", "Your Choice", "Bot Choice", "Your Points", "Bot Points"]
       ];
 
       roundData.forEach(r => {
-        data.push([
-          `Runde ${r.round}`,
-          r.you === 'cooperate' ? 'Kooperiert' : 'Defektiert',
-          r.bot === 'cooperate' ? 'Kooperiert' : 'Defektiert',
-          r.yourPoints,
-          r.botPoints
-        ]);
+        data.push([r.round, r.you, r.bot, r.yourPoints, r.botPoints]);
       });
 
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Spielverlauf");
+      XLSX.utils.book_append_sheet(wb, ws, "Game Log");
 
-      XLSX.writeFile(wb, `Prisoners_Dilemma_${Date.now()}.xlsx`);
+      XLSX.writeFile(wb, "Prisoners_Dilemma_Log.xlsx");
     }
   </script>
 </body>
 </html>
 
-    }
-
-
+</body>
+</html>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
