@@ -94,32 +94,18 @@
   </style>
 </head>
 <body>
-  <div id="intro" style="text-align: center; max-width: 700px;">
-  <h2 style="color: #ff4b4b;">How the Game Works</h2>
+  <div id="intro">
+  <h2>How the Game Works</h2>
   <p>
-    You will play 10 rounds of the classic Prisoner's Dilemma.<br><br>
+    You will play 10 rounds of the classic Prisoner's Dilemma against a bot using the Tit-for-Tat strategy.<br><br>
     <strong>Scoring:</strong><br>
     • Both Cooperate: 3 points each<br>
     • You Defect, Bot Cooperates: You 5, Bot 0<br>
     • You Cooperate, Bot Defects: You 0, Bot 5<br>
     • Both Defect: 1 point each
   </p>
-  <p>The goal is to get as many points as possible.</p>
-  <button onclick="startGame()" style="
-    background: transparent;
-    border: 2px solid #ff4b4b;
-    color: #ff4b4b;
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 2rem;
-  " onmouseover="this.style.background='#ff4b4b'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='#ff4b4b';">
-    Start Game
-  </button>
-</div>
+  <p>The goal: See how your choices affect cooperation over time.</p>
+  <button onclick="startGame()">Start Game</button>
 
 
   <h1>Prisoner's Dilemma</h1>
