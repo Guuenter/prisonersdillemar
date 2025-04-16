@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Prisoner's Dilemma</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -95,27 +94,8 @@
   </style>
 </head>
 <body>
-  <div id="overlay" style="
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(10,0,0,0.95);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-  ">
-    <div style="
-      max-width: 600px;
-      background: #1a1a1a;
-      border: 2px solid #ff0033;
-      border-radius: 16px;
-      padding: 2rem;
-      text-align: center;
-      box-shadow: 0 0 20px #ff003380;
-      font-family: 'Poppins', sans-serif;
-    ">
+  <div id="overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10,0,0,0.95); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 2rem;">
+    <div style="max-width: 600px; background: #1a1a1a; border: 2px solid #ff0033; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 0 20px #ff003380; font-family: 'Poppins', sans-serif;">
       <h2 style="color: #ff0033; margin-bottom: 1rem;">Welcome to the Prisoner's Dilemma Game</h2>
       <p style="color: #f1f1f1; font-size: 1rem; line-height: 1.6;">
         You will play <strong>10 rounds</strong> against a bot.<br><br>
@@ -125,20 +105,9 @@
         You Cooperate, Bot Betrays: You get 0, Bot gets 5<br>
         You Betray, Bot Cooperates: You get 5, Bot gets 0<br>
         Both Betray: 1 point each<br><br>
-        <strong style="color: #ff0033;">The goal is to get as many points as possible.</strong>
+        <strong style="color: #ff0033;">The goal is not to get as many points as possible.</strong>
       </p>
-      <button onclick="startGame()" style="
-        margin-top: 1.5rem;
-        background: transparent;
-        border: 2px solid #ff0033;
-        color: #ff0033;
-        font-size: 1.1rem;
-        font-weight: 600;
-        padding: 0.75rem 2rem;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      " onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
+      <button onclick="startGame()" style="margin-top: 1.5rem; background: transparent; border: 2px solid #ff0033; color: #ff0033; font-size: 1.1rem; font-weight: 600; padding: 0.75rem 2rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
         I understand, start the game
       </button>
     </div>
@@ -183,24 +152,34 @@
 
       if (playerChoice === 'cooperate' && botChoice === 'cooperate') {
         pPoints = 3; bPoints = 3;
-      } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
-        pPoints = 5; bPoints = 0;
       } else if (playerChoice === 'cooperate' && botChoice === 'defect') {
         pPoints = 0; bPoints = 5;
-      } else {
+      } else if (playerChoice === 'defect' && botChoice === 'cooperate') {
+        pPoints = 5; bPoints = 0;
+      } else if (playerChoice === 'defect' && botChoice === 'defect') {
         pPoints = 1; bPoints = 1;
       }
 
       playerScore += pPoints;
       botScore += bPoints;
+      history.push({ round, playerChoice, botChoice, pPoints, bPoints });
 
-      document.getElementById('round').textContent = round;
-      document.getElementById('playerScore').textContent = playerScore;
-      document.getElementById('botScore').textContent = botScore;
+      // Update UI
+      document.getElementById("playerScore").innerText = playerScore;
+      document.getElementById("botScore").innerText = botScore;
+      document.getElementById("round").innerText = round;
 
-      const logEntry = Round ${round}: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong>. You: +${pPoints}, Bot: +${bPoints};
-      history.push(logEntry);
-      document.getElementById('log').innerHTML = history.join('<br>');
+      const logEntry = `<strong>Round ${round}</strong>: You chose <strong>${playerChoice}</strong>, Bot chose <strong>${botChoice}</strong> → You +${pPoints}, Bot +${bPoints}<br>`;
+      document.getElementById("log").innerHTML = logEntry + document.getElementById("log").innerHTML;
 
       round++;
+
+      if (round > 10) {
+        const final = `<br><strong>Game Over</strong><br>Your Total: <strong>${playerScore}</strong><br>Bot Total: <strong>${botScore}</strong>`;
+        document.getElementById("log").innerHTML = final + "<br><br>" + document.getElementById("log").innerHTML;
+      }
     }
+  </script>
+</body>
+</html>
+
