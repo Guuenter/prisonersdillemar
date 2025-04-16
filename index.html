@@ -39,12 +39,6 @@ ul {
   box-shadow: 0 0 10px #ff4b4b80;
   margin-bottom: 2rem;
   text-align: center;
-  color: #ff4b4b;
-}
-
-.scoreboard p,
-.scoreboard span {
-  color: #ff4b4b;
 }
 
 .buttons {
@@ -54,32 +48,28 @@ ul {
 }
 
 button {
-  background: transparent;
+  background: #ff4b4b; /* Stellt sicher, dass der Hintergrund rot ist */
   border: 2px solid #ff4b4b;
-  color: #ff4b4b;
+  color: #fff; /* Weißer Text für Kontrast */
   font-size: 1.1rem;
   font-weight: 600;
   padding: 0.75rem 2rem;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-  outline: none;
 }
 
 button:hover {
-  background: #ff4b4b;
-  color: #000;
+  background: #ff1f1f; /* Helleres Rot, wenn der Button gehovt wird */
+  color: #000; /* Textfarbe wechselt zu schwarz beim Hover */
   transform: scale(1.05);
   box-shadow: 0 0 12px #ff4b4ba0;
 }
 
-button:focus,
 button:active {
-  background: #ff1f1f;
-  color: #000;
-  box-shadow: 0 0 8px #ff4b4b90;
-  transform: scale(1.02);
-  outline: none;
+  background: #e60000; /* Dunkleres Rot, wenn der Button geklickt wird */
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
 }
 
 .log {
@@ -91,7 +81,6 @@ button:active {
   border-radius: 8px;
   box-shadow: 0 0 10px #00000050 inset;
   font-size: 0.95rem;
-  color: #ff4b4b;
 }
 
 .log strong {
@@ -107,9 +96,24 @@ button:active {
   button {
     width: 100%;
   }
+
+  .scoreboard,
+  .scoreboard p,
+  .scoreboard span,
+  .log {
+    color: #ff4b4b;
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(255, 75, 75, 0.4);
+  }
+
+  button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(255, 75, 75, 0.3);
+  }
 }
-
-
 
   </style>
 </head>
@@ -180,16 +184,7 @@ button:active {
       border-top: 1px solid #ccc;
       padding-top: 1rem;
     }
-  </style>
-</head>
-<body>
 
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Prisoner's Dilemma</title>
-  <style>
     button {
       font-size: 16px;
       padding: 10px 20px;
@@ -213,20 +208,10 @@ button:active {
     .scoreboard {
       margin: 20px 0;
     }
-  </style>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-</head>
-<body>
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Prisoner's Dilemma</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      color: #ff4b4b;
+
+    .log {
+      margin-top: 20px;
+      line-height: 1.5;
     }
 
     .instruction {
@@ -235,26 +220,6 @@ button:active {
       border-left: 6px solid #ff4b4b;
       margin-bottom: 20px;
       color: #ff4b4b;
-    }
-
-    button {
-      font-size: 16px;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      color: white;
-      background-color: #ff4b4b;
-      border: none;
-      border-radius: 5px;
-    }
-
-    .scoreboard {
-      margin: 20px 0;
-    }
-
-    .log {
-      margin-top: 20px;
-      line-height: 1.5;
     }
   </style>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -272,8 +237,7 @@ button:active {
       <li><strong>You cooperate, bot defects:</strong> 0 points for you, 5 for the bot</li>
       <li><strong>Both defect:</strong> 1 point each</li>
     </ul>
-    <p>The bot follows a "Tit-for-Tat" strategy: it cooperates in the first round and then mirrors your previous choice in subsequent rounds.</p>
-  </div>
+    </div>
 
   <div id="startContainer">
     <button id="startButton">Start the Game</button>
@@ -396,7 +360,4 @@ button:active {
 </body>
 </html>
 
-</body>
-</html>
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
