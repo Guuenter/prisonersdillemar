@@ -179,7 +179,7 @@
       const timeStr = now.toLocaleTimeString();
       const datetime = `${dateStr} ${timeStr}`;
 
-      const playerChoices = history.map(h => h.playerChoice === "cooperate" ? "Kooperation" : "Nicht Kooperation");
+      const playerChoices = history.map(h => h.playerChoice === "cooperate" ? 1 : 0);
       const filledChoices = [...playerChoices];
       while (filledChoices.length < 10) filledChoices.push("");
 
