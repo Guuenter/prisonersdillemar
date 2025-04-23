@@ -181,4 +181,74 @@
     }
   </script>
 </body>
+  <script>
+  function exportGameLog() {
+    const csvRows = [];
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString();
+    const datetime = `${dateStr} ${timeStr}`;
+
+    // Spaltenüberschriften
+    let header = ["Datum & Uhrzeit"];
+    for (let i = 1; i <= 10; i++) {
+      header.push(`Runde ${i}`);
+    }
+    header.push("Spieler Punkte", "Bot Punkte", "Kooperationsrate (%)", "Farbe (Code)", "Farbe (Wort)");
+    csvRows.push(header.join(","));
+
+    // Spielerdaten
+    const playerChoices = history.map(h => h.playerChoice === "cooperate" ? "Kooperation" : "Nicht Kooperation");
+    const filledChoices = [...playerChoices];
+    while (filledChoices.length < 10) filledChoices.push(""); // falls Spiel vorzeitig endet
+
+    const coopCount = playerChoices.filter(c => c === "Kooperation").length;
+    const coopRate = ((coopCount / 10) * 100).toFixed(1);
+
+    const colorCode = "#ff3b3b";
+    const colorName = "Rot";
+
+    const row = [
+      datetime,
+      ...filledChoices,
+      playerScore,
+      botScore,
+      coopRate,
+      colorCode,
+      colorName
+    ];
+    csvRows.push(row.join(","));
+
+    // Datei erstellen & herunterladen
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const filename = `prisoners_dilemma_log_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}.csv`;
+
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Button zum Exportieren nach Spielende
+  function showExportButton() {
+    const exportBtn = document.createElement("button");
+    exportBtn.innerText = "📥 Exportiere Spiel-Log (CSV)";
+    exportBtn.style.marginTop = "1rem";
+    exportBtn.onclick = exportGameLog;
+    document.body.appendChild(exportBtn);
+  }
+
+  // Am Ende des Spiels ausführen
+  const originalPlayRound = playRound;
+  playRound = function(playerChoice) {
+    originalPlayRound(playerChoice);
+    if (round > 10) {
+      showExportButton();
+    }
+  }
+</script>
+
 </html>
