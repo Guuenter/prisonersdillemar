@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Prisoner's Dilemma</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -91,13 +92,11 @@
         width: 100%;
       }
     }
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-
   </style>
 </head>
 <body>
   <div id="overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10,0,0,0.95); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 2rem;">
-    <div style="max-width: 600px; background: #1a1a1a; border: 2px solid #ff0033; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 0 20px #ff003380; font-family: 'Poppins', sans-serif;">
+    <div style="max-width: 600px; background: #1a1a1a; border: 2px solid #ff0033; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 0 20px #ff003380;">
       <h2 style="color: #ff0033; margin-bottom: 1rem;">Welcome to the Prisoner's Dilemma Game</h2>
       <p style="color: #f1f1f1; font-size: 1rem; line-height: 1.6;">
         You will play <strong>10 rounds</strong> against a bot.<br><br>
@@ -109,9 +108,7 @@
         Both Betray: 1 point each<br><br>
         <strong style="color: #ff0033;">The goal is to get as many points as possible.</strong>
       </p>
-      <button onclick="startGame()" style="margin-top: 1.5rem; background: transparent; border: 2px solid #ff0033; color: #ff0033; font-size: 1.1rem; font-weight: 600; padding: 0.75rem 2rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#ff0033';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#ff0033'">
-        I understand, start the game
-      </button>
+      <button onclick="startGame()">I understand, start the game</button>
     </div>
   </div>
 
@@ -130,8 +127,8 @@
   </div>
 
   <div class="buttons">
-    <button onclick="playRound('cooperate')">🤝 Cooperate</button>
-    <button onclick="playRound('defect')">💣 Defect</button>
+    <button onclick="wrappedPlayRound('cooperate')">🤝 Cooperate</button>
+    <button onclick="wrappedPlayRound('defect')">💣 Defect</button>
   </div>
 
   <div class="log" id="log"></div>
@@ -166,7 +163,6 @@
       botScore += bPoints;
       history.push({ round, playerChoice, botChoice, pPoints, bPoints });
 
-      // Update UI
       document.getElementById("playerScore").innerText = playerScore;
       document.getElementById("botScore").innerText = botScore;
       document.getElementById("round").innerText = round;
@@ -175,85 +171,75 @@
       document.getElementById("log").innerHTML = logEntry + document.getElementById("log").innerHTML;
 
       round++;
+    }
 
+    function exportGameLogXLSX() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString();
+      const timeStr = now.toLocaleTimeString();
+      const datetime = `${dateStr} ${timeStr}`;
+
+      const playerChoices = history.map(h => h.playerChoice === "cooperate" ? "Kooperation" : "Nicht Kooperation");
+      const filledChoices = [...playerChoices];
+      while (filledChoices.length < 10) filledChoices.push("");
+
+      const coopCount = playerChoices.filter(c => c === "Kooperation").length;
+      const coopRate = ((coopCount / 10) * 100).toFixed(1);
+
+      const colorCode = "#ff3b3b";
+      const colorName = "Rot";
+
+      const header = ["Datum & Uhrzeit"];
+      for (let i = 1; i <= 10; i++) header.push(`Runde ${i}`);
+      header.push("Spieler Punkte", "Bot Punkte", "Kooperationsrate (%)", "Farbe (Code)", "Farbe (Wort)");
+
+      const row = [
+        datetime,
+        ...filledChoices,
+        playerScore,
+        botScore,
+        coopRate,
+        colorCode,
+        colorName
+      ];
+
+      const worksheet = XLSX.utils.aoa_to_sheet([header, row]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Prisoners Dilemma");
+
+      const filename = `prisoners_dilemma_log_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}.xlsx`;
+      XLSX.writeFile(workbook, filename);
+    }
+
+    function showEndScreen() {
+      const endScreen = document.createElement("div");
+      endScreen.style.position = "fixed";
+      endScreen.style.top = "0";
+      endScreen.style.left = "0";
+      endScreen.style.width = "100vw";
+      endScreen.style.height = "100vh";
+      endScreen.style.background = "rgba(10,0,0,0.95)";
+      endScreen.style.zIndex = "2000";
+      endScreen.style.display = "flex";
+      endScreen.style.justifyContent = "center";
+      endScreen.style.alignItems = "center";
+      endScreen.style.padding = "2rem";
+      endScreen.innerHTML = `
+        <div style="max-width: 600px; background: #1a1a1a; border: 2px solid #ff0033; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 0 20px #ff003380; font-family: 'Poppins', sans-serif;">
+          <h2 style="color: #ff0033; margin-bottom: 1.5rem;">Game Over</h2>
+          <p style="color: #f1f1f1; font-size: 1.1rem;">You reached <strong>${playerScore}</strong> points.<br><br>Thank you for participating!</p>
+        </div>
+      `;
+      document.body.appendChild(endScreen);
+    }
+
+    function wrappedPlayRound(choice) {
+      playRound(choice);
       if (round > 10) {
-        const final = `<br><strong>Game Over</strong><br>Your Total: <strong>${playerScore}</strong><br>Bot Total: <strong>${botScore}</strong>`;
-        document.getElementById("log").innerHTML = final + "<br><br>" + document.getElementById("log").innerHTML;
+        exportGameLogXLSX();
+        showEndScreen();
       }
     }
   </script>
 </body>
-<script>
-  function exportGameLogXLSX() {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString();
-    const timeStr = now.toLocaleTimeString();
-    const datetime = `${dateStr} ${timeStr}`;
-
-    const playerChoices = history.map(h => h.playerChoice === "cooperate" ? "Kooperation" : "Nicht Kooperation");
-    const filledChoices = [...playerChoices];
-    while (filledChoices.length < 10) filledChoices.push(""); // falls nicht voll gespielt
-
-    const coopCount = playerChoices.filter(c => c === "Kooperation").length;
-    const coopRate = ((coopCount / 10) * 100).toFixed(1);
-
-    const colorCode = "#ff3b3b";
-    const colorName = "Rot";
-
-    const header = ["Datum & Uhrzeit"];
-    for (let i = 1; i <= 10; i++) header.push(`Runde ${i}`);
-    header.push("Spieler Punkte", "Bot Punkte", "Kooperationsrate (%)", "Farbe (Code)", "Farbe (Wort)");
-
-    const row = [
-      datetime,
-      ...filledChoices,
-      playerScore,
-      botScore,
-      coopRate,
-      colorCode,
-      colorName
-    ];
-
-    const worksheet = XLSX.utils.aoa_to_sheet([header, row]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Prisoners Dilemma");
-
-    const filename = `prisoners_dilemma_log_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}.xlsx`;
-    XLSX.writeFile(workbook, filename);
-  }
-
-  function showEndScreen() {
-    const endScreen = document.createElement("div");
-    endScreen.style.position = "fixed";
-    endScreen.style.top = "0";
-    endScreen.style.left = "0";
-    endScreen.style.width = "100vw";
-    endScreen.style.height = "100vh";
-    endScreen.style.background = "rgba(10,0,0,0.95)";
-    endScreen.style.zIndex = "2000";
-    endScreen.style.display = "flex";
-    endScreen.style.justifyContent = "center";
-    endScreen.style.alignItems = "center";
-    endScreen.style.padding = "2rem";
-    endScreen.innerHTML = `
-      <div style="max-width: 600px; background: #1a1a1a; border: 2px solid #ff0033; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 0 20px #ff003380; font-family: 'Poppins', sans-serif;">
-        <h2 style="color: #ff0033; margin-bottom: 1.5rem;">Game Over</h2>
-        <p style="color: #f1f1f1; font-size: 1.1rem;">You reached <strong>${playerScore}</strong> points.<br><br>Thank you for participating!</p>
-      </div>
-    `;
-    document.body.appendChild(endScreen);
-  }
-
-  const originalPlayRound = playRound;
-  playRound = function(playerChoice) {
-    originalPlayRound(playerChoice);
-    if (round > 10) {
-      exportGameLogXLSX();
-      showEndScreen();
-    }
-  }
-</script>
-
-</script>
-
 </html>
